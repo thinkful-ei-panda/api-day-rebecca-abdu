@@ -1,20 +1,30 @@
 import $ from 'jquery';
-
 import 'normalize.css';
 import './index.css';
-
 import shoppingList from './shopping-list';
-
-/*fetch('https://thinkful-list-api.herokuapp.com/ei-student/items')
-  .then(res => res.json())
-  .then(data => console.log(data));*/
+import api from './api';
+import store from './store';
 
 const main = function () {
-  fetch('https://thinkful-list-api.herokuapp.com/ei-student/items')
+  api.getItems()
     .then(res => res.json())
-    .then(data => console.log(data));
+    .then((items) => {
+      const item = items[0];
+      return api.updateItem(item.id, { name: 'foobar' });
+    })
+    .then(res => res.json())
+    .then(() => console.log('updated!'));
+
+  api.getItems()
+    .then(res => res.json())
+    .then((items) => {
+	  items.forEach((item) => store.addItem(item));
+	  shoppingList.render();
+    });
+
   shoppingList.bindEventListeners();
   shoppingList.render();
 };
 
 $(main);
+
